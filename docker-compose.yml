@@ -1,0 +1,12 @@
+version: "3.10"
+services:
+  app:
+    build: .
+    volumes:
+      - .:/code
+    restart: unless-stopped
+    ports:
+      - '8000:8000'
+    image: app:dms
+    container_name: dms-app
+    command: python manage.py runserver 0.0.0.0:8000
