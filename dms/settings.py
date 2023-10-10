@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
+import rest_framework.permissions
 from dotenv import load_dotenv
 from pathlib import Path
 import os
@@ -31,17 +32,26 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+DJANGO_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "frontend"
+    "rest_framework",
+    #    "corsheaders",
 ]
 
+LOCAL_APPS = [
+    "frontend",
+    "user",
+]
+
+INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS
+
 MIDDLEWARE = [
+    #    "coresheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -56,7 +66,7 @@ ROOT_URLCONF = "dms.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, 'frontend', 'build')],
+        "DIRS": [os.path.join(BASE_DIR, "frontend/react-build")],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -68,6 +78,9 @@ TEMPLATES = [
         },
     },
 ]
+
+REST_FRAMEWORK = {"DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"]}
+CORS_ORIGIN_ALLOW_ALL = True
 
 WSGI_APPLICATION = "dms.wsgi.application"
 
@@ -82,6 +95,17 @@ DATABASES = {
     }
 }
 
+# Models
+AUTH_USER_MODEL = "user.User"
+
+"""
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+    ),
+}
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -118,6 +142,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "frontend/react-build/static")]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
